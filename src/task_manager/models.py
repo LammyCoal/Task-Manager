@@ -15,3 +15,4 @@ class Task:
         status = '✓' if self.completed else ' '
         due = f" Due: {self.due_date}" if self.due_date else ' '
         return f" {status} {self.title} - Priority: {self.priority}{due}"
+
