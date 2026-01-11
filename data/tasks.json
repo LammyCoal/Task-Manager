@@ -6,9 +6,9 @@
         "completed": false
     },
     {
-        "title": "go to work",
+        "title": "Learn web development",
         "priority": "high",
         "due_date": null,
-        "completed": false
+        "completed": true
     }
 ]

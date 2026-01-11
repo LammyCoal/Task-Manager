@@ -21,7 +21,7 @@ def load_tasks() -> List[Task]:
         if elements["completed"]:
             task.mark_completed()
         tasks.append(task)
-        return tasks
+    return tasks
 
 
 def save_tasks(tasks: List[Task]):
