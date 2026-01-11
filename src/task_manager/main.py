@@ -27,4 +27,15 @@ def list():
         typer.echo(f"{i}. {task.title}")
 
 @app.command()
+def done(num: int):
+    task = load_tasks()
+    if 1 <= num <= len(task):
+        task[num-1].mark_completed()
+        typer.echo(f"{num} is marked as completed")
+
+    else:
+        typer.echo(f"{num} is not a valid number")
+
+if __name__ == "__main__":
+    app()
 

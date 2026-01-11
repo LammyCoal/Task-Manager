@@ -7,15 +7,16 @@ from typing import List
 DATA_FILE = Path(__file__).parent.parent.parent / "data" / "tasks.json"
 
 def load_tasks() -> List[Task]:
+    try:
+        with open(DATA_FILE, 'r') as file:
+            json_data = json.load(file)
 
-    if not DATA_FILE.exists():
+    except FileNotFoundError:
         return []
-    with open(DATA_FILE, 'r') as file:
-        json_data = json.load(file)
 
     tasks = []
     for elements in json_data:
-        due = date.fromisoformat(elements["due_date"]) if elements.due_date else None
+        due = date.fromisoformat(elements["due_date"]) if elements["due_date"] else None
         task = Task(elements["title"], elements["priority"], due)
         if elements["completed"]:
             task.mark_completed()
@@ -36,4 +37,4 @@ def save_tasks(tasks: List[Task]):
     }
     )
     with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=4)
