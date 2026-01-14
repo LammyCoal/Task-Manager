@@ -16,13 +16,13 @@ def add(title: str, priority: str= 'medium', due: Optional[str] = None):
 
 
 @app.command()
-def lists():
+def lists  ():
     load = load_tasks()
     if not load:
         typer.echo("No tasks yet")
         return
     for i, task in enumerate(load, 1):
-        typer.echo(f"{i}. {task.title}")
+        typer.echo(f"{i}. {task.title}, Priority: {task.priority}, Due: {task.due_date}")
 
 @app.command()
 def done(num: int):
@@ -51,7 +51,7 @@ def edit(
         index: int,
         title: Optional[str]=None,
         priority: str = None,
-        due: Optional[str] = None,
+        due_date: Optional[str] = None,
 ):
     task = load_tasks()
     if not (1 <= index <= len(task)):
@@ -66,8 +66,8 @@ def edit(
     if priority:
         real_task.priority = priority
 
-    if due:
-        real_task.due = date.fromisoformat(due)
+    if due_date:
+        real_task.due_date = date.fromisoformat(due_date)
 
     save_tasks(task)
     typer.echo(f"{real_task.title} is edited")
