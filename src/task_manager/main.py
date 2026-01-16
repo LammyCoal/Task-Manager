@@ -1,8 +1,13 @@
+from asyncio import tasks
+from enum import Enum
+
 import typer
 from typing import Optional
 from datetime import date
 from .models import Task
 from .storage import load_tasks, save_tasks
+from rich.console import Console
+from rich.table import Table
 
 app = typer.Typer(help="CLI Task Manager")
 
@@ -14,16 +19,43 @@ def add(title: str, priority: str= 'medium', due: Optional[str] = None):
     save_tasks(task)
     typer.echo(f"{title} is added")
 
+console = Console()
+
+class Priority(str, Enum):
+    LOW = 'low'
+    MEDIUM = 'medium'
+    HIGH = 'high'
+
+PRIORITY_COLORS = {
+    Priority.LOW: 'red',
+    Priority.MEDIUM: 'yellow',
+    Priority.HIGH: 'green'
+}
 
 @app.command()
-def lists  ():
-    load = load_tasks()
-    if not load:
-        typer.echo("No tasks yet")
-        return
-    for i, task in enumerate(load, 1):
-        typer.echo(f"{i}. {task.title}, Priority: {task.priority}, Due: {task.due_date}")
+def lists (sort_by: str = 'priority'):
+    tasks = load_tasks()
 
+    if not tasks:
+        console.print("[italic dim] No tasks yet!, add some with : add 'Do something'[/italic dim]")
+        return
+
+    if sort_by == 'priority':
+        priority_level={"high": 0, "medium": 1, "low": 2}
+        tasks.sort(key=lambda t: priority_level.get(t.priority, 1))
+
+    elif sort_by == 'due':
+        tasks.sort(key=lambda t: t.due_date or date.max)
+
+table = Table(show_header=True, header_style="bold magenta")
+table.add_column('#', style="dim", width=4)
+table.add_column("Task", justify="center")
+table.add_column("Priority", justify="center")
+table.add_column("Due", justify="right")
+table.add_column("Status")
+
+for i, task in enumerate(tasks):
+    status = "[green]✓ Done[/green]" if task.completed else "[red]Pending[/red]"
 @app.command()
 def done(num: int):
     task = load_tasks()
