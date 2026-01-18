@@ -1,6 +1,4 @@
-from asyncio import tasks
 from enum import Enum
-
 import typer
 from typing import Optional
 from datetime import date
@@ -47,15 +45,27 @@ def lists (sort_by: str = 'priority'):
     elif sort_by == 'due':
         tasks.sort(key=lambda t: t.due_date or date.max)
 
-table = Table(show_header=True, header_style="bold magenta")
-table.add_column('#', style="dim", width=4)
-table.add_column("Task", justify="center")
-table.add_column("Priority", justify="center")
-table.add_column("Due", justify="right")
-table.add_column("Status")
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column('#', style="dim", width=4)
+    table.add_column("Task", justify="center")
+    table.add_column("Priority", justify="center")
+    table.add_column("Due", justify="right")
+    table.add_column("Status")
 
-for i, task in enumerate(tasks):
-    status = "[green]✓ Done[/green]" if task.completed else "[red]Pending[/red]"
+    for i, task in enumerate(tasks, 1):
+        status = "[green]✓ Done[/green]" if task.completed else "[red]Pending[/red]"
+        due = task.due_date.strftime("%Y-%m-%d") if task.due_date else "-"
+        priority_color = f"[{PRIORITY_COLORS.get(task.priority, 'white')}] {task.priority.upper()}[/{PRIORITY_COLORS.get(task.priority, 'white')}]"
+
+        table.add_row(
+                str(i),
+                task.title,
+                priority_color,
+                due,
+                status,
+            )
+        console.print(table)
+
 @app.command()
 def done(num: int):
     task = load_tasks()

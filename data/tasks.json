@@ -3,7 +3,7 @@
         "title": "Create a CLI app with python",
         "priority": "high",
         "due_date": "2026-01-17",
-        "completed": false
+        "completed": true
     },
     {
         "title": "Learn web development",
@@ -12,9 +12,9 @@
         "completed": true
     },
     {
-        "title": "Go to work on thursday",
-        "priority": "high",
-        "due_date": "2026-01-15",
-        "completed": true
+        "title": "Play football",
+        "priority": "medium",
+        "due_date": "2026-01-18",
+        "completed": false
     }
 ]
