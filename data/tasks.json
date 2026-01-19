@@ -1,6 +1,6 @@
 [
     {
-        "title": "Create a CLI app with python",
+        "title": "Create a to-do list app on CLI with python",
         "priority": "high",
         "due_date": "2026-01-17",
         "completed": true
@@ -8,13 +8,19 @@
     {
         "title": "Learn web development",
         "priority": "high",
-        "due_date": null,
+        "due_date": "2026-02-27",
         "completed": true
     },
     {
-        "title": "Play football",
-        "priority": "medium",
-        "due_date": "2026-01-18",
+        "title": "prayer",
+        "priority": "high",
+        "due_date": null,
+        "completed": false
+    },
+    {
+        "title": "call mom",
+        "priority": "high",
+        "due_date": "2026-01-24",
         "completed": false
     }
 ]

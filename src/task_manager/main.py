@@ -7,18 +7,6 @@ from .storage import load_tasks, save_tasks
 from rich.console import Console
 from rich.table import Table
 
-app = typer.Typer(help="CLI Task Manager")
-
-@app.command()
-def add(title: str, priority: str= 'medium', due: Optional[str] = None):
-    task = load_tasks()
-    due_date = date.fromisoformat(due) if due else None
-    task.append(Task(title,priority, due_date))
-    save_tasks(task)
-    typer.echo(f"{title} is added")
-
-console = Console()
-
 class Priority(str, Enum):
     LOW = 'low'
     MEDIUM = 'medium'
@@ -30,8 +18,30 @@ PRIORITY_COLORS = {
     Priority.HIGH: 'green'
 }
 
+app = typer.Typer(help="CLI Task Manager")
+console = Console()
+
+@app.command()
+def add(title: str, priority: Priority= Priority.MEDIUM , due: Optional[str] = None):
+    """Adds a new task."""
+    try:
+        due_date = date.fromisoformat(due) if due else None
+    except ValueError:
+        console.print("[red]Invalid date format[/red] Use YYYY-MM-DD")
+        return
+
+    task = load_tasks()
+    new_task = (Task(title,priority.value, due_date))
+    task.append(new_task)
+    save_tasks(task)
+
+    console.print(f"[green]Task:[/green] {new_task.title}")
+    console.print(f"[green]Priority:[/green] {priority.value} and [green]Due:[/green] {due_date}")
+
+
 @app.command()
 def lists (sort_by: str = 'priority'):
+    """list of tasks with good formatting(accepts priority or due as inputs)"""
     tasks = load_tasks()
 
     if not tasks:
@@ -64,36 +74,38 @@ def lists (sort_by: str = 'priority'):
                 due,
                 status,
             )
-        console.print(table)
+    console.print(table)
 
 @app.command()
 def done(num: int):
+    """Mark tasks as completed by number"""
     task = load_tasks()
-    if 1 <= num <= len(task):
-        task[num-1].mark_completed()
-        typer.echo(f"{num} is marked as completed")
-        save_tasks(task)
+    if not 1 <= num <= len(task):
+        console.print(f"[red]Error[/red] Task {num} does not exist")
+        return
 
-    else:
-        typer.echo(f"{num} is not a valid number")
+    task[num-1].mark_completed()
+    save_tasks(task)
+    console.print(f"[green] ✓ [/green] Task {num} is done")
 
 @app.command()
 def delete(num: int):
+    """ Deletes Task by number"""
     task = load_tasks()
-    if 1 <= num <= len(task):
-        task_num = task.pop(num - 1)
-        save_tasks(task)
-        typer.echo(f"{num}. {task_num.title} is deleted")
+    if not 1 <= num <= len(task):
+        console.print(f"[red]Error[/red] Task {num} does not exist")
+        return
 
-    else:
-        typer.echo(f"{num} is not a valid task number")
+    task_num = task.pop(num - 1)
+    save_tasks(task)
+    console.print(f"[red]Deleted:[/red] Task{task_num}from database ")
 
 @app.command()
 def edit(
         index: int,
         title: Optional[str]=None,
         priority: str = None,
-        due_date: Optional[str] = None,
+        due: Optional[str] = None,
 ):
     task = load_tasks()
     if not (1 <= index <= len(task)):
@@ -108,8 +120,8 @@ def edit(
     if priority:
         real_task.priority = priority
 
-    if due_date:
-        real_task.due_date = date.fromisoformat(due_date)
+    if due:
+        real_task.due_date = date.fromisoformat(due)
 
     save_tasks(task)
     typer.echo(f"{real_task.title} is edited")
