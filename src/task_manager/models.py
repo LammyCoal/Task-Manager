@@ -12,6 +12,6 @@ class Task:
         self.completed = True
 
     def __str__(self):
-        status = '✓' if self.completed else ' '
+        status = '✓' if self.completed else 'Pending'
         due = f" Due: {self.due_date}" if self.due_date else ' '
         return f" {status} {self.title} - Priority: {self.priority}{due}"
