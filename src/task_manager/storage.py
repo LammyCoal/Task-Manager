@@ -35,5 +35,5 @@ def save_tasks(tasks: List[Task], path: Path = DATA_FILE):
         "completed": items.completed,
     }
     )
-    with open(DATA_FILE, 'w') as f:
+    with open(path, 'w') as f:
         json.dump(data, f, indent=4)
