@@ -19,8 +19,8 @@
     },
     {
         "title": "call mom",
-        "priority": "high",
+        "priority": "medium",
         "due_date": "2026-01-24",
-        "completed": false
+        "completed": true
     }
 ]

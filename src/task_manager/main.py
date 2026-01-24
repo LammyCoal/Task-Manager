@@ -40,13 +40,27 @@ def add(title: str, priority: Priority= Priority.MEDIUM , due: Optional[str] = N
 
 
 @app.command()
-def lists (sort_by: str = 'priority'):
+def lists (
+        pending: bool = typer.Option(False, "--pending", "-p", help="show only task that are pending"),
+        done: bool = typer.Option(False, "--done",help="show only task that are done"),
+        high: bool = typer.Option(False, "--high",help="show only task that are has high priority"),
+        today: bool = typer.Option(False, "--today", help="show tasks due today"),
+        overdue: bool = typer.Option(False, "--overdue",help="shows overdue tasks"),
+        sort_by: str = typer.Option("priority", "--sort",help="sort by: priority, due")
+):
     """list of tasks with good formatting(accepts priority or due as inputs)"""
     tasks = load_tasks()
 
-    if not tasks:
-        console.print("[italic dim] No tasks yet!, add some with : add 'Do something'[/italic dim]")
-        return
+    if pending:
+        tasks = [t for t in tasks if not t.completed]
+    if done:
+        tasks = [t for t in tasks if t.completed]
+    if high:
+        tasks = [t for t in tasks if t.priority == "high"]
+    if today:
+        tasks = [t for t in tasks if t.due_date == date.today()]
+    if overdue:
+        tasks = [t for t in tasks if t.due_date and t.due_date < date.today() and not t.completed]
 
     if sort_by == 'priority':
         priority_level={"high": 0, "medium": 1, "low": 2}
@@ -54,6 +68,10 @@ def lists (sort_by: str = 'priority'):
 
     elif sort_by == 'due':
         tasks.sort(key=lambda t: t.due_date or date.max)
+
+    if not tasks:
+        console.print("[italic dim] No tasks yet!, add some with : add 'Do something'[/italic dim]")
+        return
 
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column('#', style="dim", width=4)
@@ -77,7 +95,7 @@ def lists (sort_by: str = 'priority'):
     console.print(table)
 
 @app.command()
-def done(num: int):
+def done_task(num: int):
     """Mark tasks as completed by number"""
     task = load_tasks()
     if not 1 <= num <= len(task):
@@ -109,7 +127,7 @@ def edit(
 ):
     task = load_tasks()
     if not (1 <= index <= len(task)):
-        typer.echo(f"{index} is not a valid task number")
+        console.print(f"[red] {index} is not a valid task number [/red]")
         return
 
     real_task = task[index - 1]
@@ -124,7 +142,7 @@ def edit(
         real_task.due_date = date.fromisoformat(due)
 
     save_tasks(task)
-    typer.echo(f"{real_task.title} is edited")
+    console.print(f"[bold green]{real_task.title} is edited[/bold green]  ")
 
 if __name__ == "__main__":
     app()
