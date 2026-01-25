@@ -15,7 +15,7 @@
         "title": "prayer",
         "priority": "high",
         "due_date": null,
-        "completed": false
+        "completed": true
     },
     {
         "title": "call mom",

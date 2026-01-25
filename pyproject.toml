@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "task-manager"
+version = '0.1.0'
+authors = [
+    {name = "Edu Lukmon"}
+]
+description = "The best CLI app built with typer"
+readme = "README.md"
+requires-python =">=3.9"
+dependancies = [
+    "typer[all]>= 0.9.0",
+    "rich>=13.0.0"
+]
+
+[project.scripts]
+task-manager = "task_manager.main:app"

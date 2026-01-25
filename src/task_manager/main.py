@@ -108,7 +108,7 @@ def done_task(num: int):
 
 @app.command()
 def delete(num: int):
-    """ Deletes Task by number"""
+    """ Deletes Task by its index"""
     task = load_tasks()
     if not 1 <= num <= len(task):
         console.print(f"[red]Error[/red] Task {num} does not exist")
@@ -116,7 +116,7 @@ def delete(num: int):
 
     task_num = task.pop(num - 1)
     save_tasks(task)
-    console.print(f"[red]Deleted:[/red] Task{task_num}from database ")
+    console.print(f"[red]Deleted:[/red] Task{task_num} from database ")
 
 @app.command()
 def edit(
@@ -125,6 +125,7 @@ def edit(
         priority: str = None,
         due: Optional[str] = None,
 ):
+    """Edits Task by its index"""
     task = load_tasks()
     if not (1 <= index <= len(task)):
         console.print(f"[red] {index} is not a valid task number [/red]")
