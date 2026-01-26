@@ -145,6 +145,21 @@ def edit(
     save_tasks(task)
     console.print(f"[bold green]{real_task.title} is edited[/bold green]  ")
 
+@app.command()
+def clear():
+    """clears tasks that are marked done!!"""
+    tasks = load_tasks()
+    total_tasks = len(tasks)
+
+    incomplete_tasks = [t for t in tasks if not t.completed]
+    save_tasks(incomplete_tasks)
+    removed_completed = total_tasks - len(incomplete_tasks)
+
+    if removed_completed == 0:
+        console.print(f"[yellow]No completed tasks to clear[/yellow]")
+    else:
+        console.print(f"[bold green]Cleared {removed_completed} task{'s' if removed_completed != 1 else ''}[/bold green]")
+
 if __name__ == "__main__":
     app()
 
